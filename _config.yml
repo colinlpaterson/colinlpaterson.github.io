@@ -1,0 +1,19 @@
+title: Colin Paterson
+description: Computational Finance and R Programming, 
+author: Colin Paterson
+email: colin.paterson@safecu.org
+
+# Blog settings
+show_excerpts: true
+theme: minima
+
+# Optional social links
+github_username: colinlpaterson
+linkedin_username: https://www.linkedin.com/in/colin-paterson-4a5b3b/
+
+# Pagination
+paginate: 5
+paginate_path: "/page:num/"
+
+# Build settings
+markdown: kramdown
