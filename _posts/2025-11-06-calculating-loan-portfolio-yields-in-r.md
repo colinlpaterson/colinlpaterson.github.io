@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Calculating Loan Portfolio Yields in R: My Contribution to the FinCal Package"
-date: 2024-11-06
+date: 2025-11-06
 categories: [r-programming, finance]
 excerpt: "How I built and contributed a function to calculate effective yields for analyzing loan pools."
 ---
