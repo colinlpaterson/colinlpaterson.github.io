@@ -10,7 +10,7 @@ When analyzing loan participation pools, I needed to calculate effective yields 
 
 ## The Problem
 
-A critical metric used to evaluate loan participations is the effective yield, which is the internal rate of return of a series of cash flows. I needed a function that could:
+A critical metric used to evaluate loan participations is the effective yield, which is the internal rate of return of a series of cash flows (including the purchase price of the pool). I needed a function that could:
 - Accept actual calendar dates for when cash flows are expected to be received
 - Be flexible to allow irregular cash flows
 - Calculate effective yield using actual/actual day count
@@ -93,7 +93,7 @@ The maintainer accepted the contribution, and it was merged into FinCal version 
 
 **For other analysts:**
 - Handles real-world complexities of irregular cash flows
-- Flexible compounding conventions for different comparison needs
+- Flexible compounding conventions for different comparison needs (e.g. fixed income analysis)
 - Open source and free to use
 - **Can be integrated into automated reporting pipelines**
 
@@ -123,7 +123,7 @@ Uses numerical root-finding to solve for the yield where net present value equal
 1. **Identify real gaps** - Build tools that solve actual problems in your workflow
 2. **Leverage AI assistance** - Claude helped me write cleaner code and navigate the contribution process
 3. **Test thoroughly** - Financial calculations demand accuracy; comprehensive testing is essential
-4. **Give back** - Contributing to open source helps others and builds your professional presence
+4. **Give back** - Contributing to open source helps others, is in the spirit of credit unions helping each other, builds your professional presence as an finance focused open source developer
 5. **Document well** - Clear documentation makes functions actually usable
 
 ## Resources
