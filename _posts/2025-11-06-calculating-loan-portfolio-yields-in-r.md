@@ -2,6 +2,7 @@
 layout: post
 title: "Calculating Loan Portfolio Yields in R: My Contribution to the FinCal Package"
 date: 2025-11-06
+tags:[R, FinCal, finance, open-source, banking]
 categories: [r-programming, finance]
 excerpt: "How I built and contributed a function to calculate effective yields for analyzing loan pools."
 ---
@@ -20,7 +21,7 @@ A critical metric used to evaluate loan participations is the effective yield, w
 
 Working with Claude Sonnet 4.5, I developed a function that calculates the internal rate of return using actual calendar days between cash flows. Claude helped me refine the implementation, ensure proper error handling, and structure the function to follow R package conventions.
 
-The function signature:
+### The function signature:
 ```r
 yield.actual(cf, pv, start_date = NULL, compounding = "semiannual", 
              max_iter = 100, tol = 1e-8)
