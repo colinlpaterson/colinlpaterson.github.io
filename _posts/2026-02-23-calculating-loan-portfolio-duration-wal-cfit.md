@@ -19,7 +19,7 @@ Specifically, knowing a homogeneous loan pool's duration, convexity, and WAL hel
 
 ## The Solution: cfit::calculate_duration() and cfit::calculate_wal()
 
-`calculate_duration()` accepts a cash flow data frame, generated from cfit:: calculate_cash_flows() and calculates Macaulay Duration, Modified Duration, Analytical Convexity, and WAL.
+`calculate_duration()` accepts a cash flow data frame, generated from cfit:: calculate_cash_flows() and calculates Macaulay Duration, Modified Duration, and Analytical Convexity. `calculate_wal() accepts the same cash flow data frame and returns the WAL.
 
 **Benefits:**
 - **Transparent** - Open-source methodology documented in code and help files, no black boxes
