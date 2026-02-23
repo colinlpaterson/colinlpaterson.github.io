@@ -19,7 +19,14 @@ Community Financial Institutions (FI) need to forecast loan portfolio cash flows
 - **Reproducible** - Same configuration produces identical results, making outputs audit-ready
 - **Flexible** - Handles tier-based assumptions, multiple fee structures, and different accounting treatments
 
-## Basic Usage
+## Basic Usage of calculate_cash_flows() and FinCal::yield.actual()
+
+In a previous post, I built and contributed yield.actual() to the FinCal package to calculate effective yields using actual calendar dates and flexible compounding conventions.
+
+calculate_cash_flows() produces the exact type of monthly cash flow structure required for yield analysis. Together, these two functions form a fully programmatic loan pool valuation pipeline:
+
+Loan snapshot → Projected cash flows → Effective yield (actual/actual) → (next: WAL + duration)
+
 ```r
 # Install dependencies (FinCal is not a cfit dependency)
 devtools::install_github("felixfan/FinCal")
@@ -111,11 +118,53 @@ The function accepts a `config` list to customize calculations:
 
 ## What Gets Calculated?
 
-The function returns loan-level cash flows with two important resulting columns:
+For each loan and each month, the function generates detailed cash flow components that separate **contractual loan performance** from **investor economics**.
 
-**`total_payment`** - Gross cash flow from the loan (gross_interest + total_principal) before any deductions. Use this for gross portfolio yield calculations.
+### Key Balance Fields
 
-**`investor_total`** - Net cash flow to the owner after deducting servicing fees, reporting fees, origination fees, and credit losses (if `credit_loss_reduces_interest = TRUE`), then applying the investor share. Use this for net portfolio yield calculations - the true economic return.
+- **`starting_balance`**  
+  Outstanding principal at the beginning of the month.
+
+- **`adjusted_balance`**  
+  Balance remaining after applying credit loss and prepayment for the month, before scheduled principal.
+
+- **`accrual_balance`**  
+  The balance used to calculate interest and fees.  
+  - Default: equal to `adjusted_balance`  
+  - Optional: equal to `starting_balance` if `interest_on_starting_balance = TRUE`
+
+This distinction allows analysts to control whether interest accrues before or after loss/prepayment effects.
+
+---
+
+### Contractual Cash Flow Components
+
+- **`gross_interest`** – Interest earned on the accrual balance.
+- **`scheduled_principal`** – Contractual amortization portion of the payment.
+- **`prepayment`** – Additional principal from CPR assumptions.
+- **`credit_loss`** – Principal reduction from modeled credit cost.
+- **`total_principal`** – Scheduled principal + prepayment.
+- **`remaining_balance`** – Ending principal balance after all principal and credit loss.
+- **`total_payment`** – Gross contractual cash flow: gross_interest + total_principal. It reflects how the loan performs before fees, accounting treatment, or investor ownership structure.
+
+---
+
+### Investor-Level Cash Flow Components
+
+Investor cash flows incorporate fees, ownership percentage, and accounting conventions.
+
+- **`servicing_fee_amt`**
+- **`reporting_fee_amt`**
+- **`orig_fee`** – Amortized origination fee
+- **`net_interest`** – Interest remaining after fees (and optionally credit loss). Net interest is floored at zero — the investor does not pay the servicer in negative spread scenarios.
+- **`investor_principal`** – Principal × `investor_share`
+- **`investor_interest`** – Net interest × `investor_share`
+- **`investor_total`** – Final investor cash flow: investor_principal + investor_interest
+
+By default (`credit_loss_reduces_interest = TRUE`), credit losses reduce interest available to investors before distribution.  
+If set to `FALSE`, credit losses reduce principal only and do not directly reduce interest cash flows.
+
+`investor_total` represents the true economic cash flow to the owner and is typically used for yield calculations.
 
 ## Real-World Use Cases
 
@@ -146,6 +195,14 @@ Generate loan-level cash flow projections incorporating probability of default a
 - `col_tier` - Risk tier or classification for differentiated assumptions
 - `col_monthly_payment` - Contractual monthly payment amount
 - `col_orig_balance` - Original loan amount at origination
+
+## Modeling Assumptions
+- Level-payment amortization unless a monthly payment is provided
+- CPR and credit costs are converted to equivalent monthly rates
+- Cash flows are generated on a monthly schedule beginning at eff_date (by default using seq.Date(eff_date, by="month"))
+- Within each month, credit loss is applied first to the starting balance, followed by prepayment (CPR → SMM), and then scheduled principal amortization.
+- No rate resets (fixed-rate loans assumed)
+- By default, interest and fees accrue on the adjusted balance (after prepay/losses); set interest_on_starting_balance = TRUE to accrue on starting balance
 
 ## Get Started
 
