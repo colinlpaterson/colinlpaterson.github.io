@@ -8,20 +8,20 @@ excerpt: "How to measure the duration and WAL of a loan portfolio using the cfit
 
 ## The Problem
 
-A fundamental task in banking is managing the difference between the interest owed on liabilities and the interest earned on assets (commonly known as interest rate risk management (IRR)). Important measurements in this job are:
+Interest Rate Risk (IRR) management is a core function of banking. Financial institutions must understand how changes in market rates affect the value and timing of their asset cash flows relative to their liabilities. Key metrics used to manage IRR include:
 
-- Macaulay Duration: the weighted average time until you receive all cash flows, measured in years. Each cash flow (principal and interest payment) is weighted by its present value as a percentage of the loan's total present value.
-- Modified Duration: measures the percentage change in price (present value) for a 1% change in interest rates. It's the practical, albeit crude tool to manage interest rate risk.
-- Analytical Convexity: measures the curvature of the price-yield relationship. It captures how duration itself changes as interest rates change.
-- Weighted Average Life (WAL): measures the average time (in years) for principal to repaid (no discounting).
+- **Macaulay Duration**: the weighted average time until you receive all cash flows, measured in years. Each cash flow (principal and interest payment) is weighted by its present value as a percentage of the loan's total present value.
+- **Modified Duration**: measures the percentage change in price (present value) for a 1% change in interest rates. It's the practical, albeit crude tool to manage interest rate risk.
+- **Analytical Convexity**: measures the curvature of the price-yield relationship. It captures how duration itself changes as interest rates change.
+- **Weighted Average Life (WAL)**: measures the average time (in years) for principal to repaid (no discounting).
 
-Specifically, knowing a homogeneous loan pool's duration, convexity, and WAL helps management make informed decisions around managing IRR and strategic planning. Often this task is outsourced to a third-party vendor or is not measured on a specific portfolio due to the complexity of computations.
+Understanding a loan pool's duration, convexity, and WAL enables management to evaluate balance sheet sensitivity, assess duration gaps, and make informed asset allocation decisions. In practice, these calculations are often outsourced to third-party vendors or not performed at the homogeneous pool level due to computational complexity.
 
 ## The Solution: cfit::calculate_duration() and cfit::calculate_wal()
 
 `calculate_duration()` accepts a cash flow data frame, generated from cfit:: calculate_cash_flows() and calculates Macaulay Duration, Modified Duration, and Analytical Convexity. `calculate_wal() accepts the same cash flow data frame and returns the WAL.
 
-**Benefits:**
+**Benefits**:
 - **Transparent** - Open-source methodology documented in code and help files, no black boxes
 - **Reproducible** - Same configuration produces identical results, making outputs audit-ready
 - **Scalable** - The function can be applied to many cash flow data frames without having to rebuild the calculations each time. This facilitates comparing different loan portfolios.
@@ -262,10 +262,10 @@ Macaulay Duration, Modified Duration, and WAL help inform hedging, pricing, and 
 
 **Required columns:**
 - `LOAN_ID` - Unique loan identifier
-- `rate` - Annual interest rate (e.g., 0.06 for 6%)
-- `eff_date` - Effective/valuation date
-- `month` - Projection period (1 = time 0)
-- `total_payment` OR `investor_total` - Cash flow amounts
+- `rate` - Annual interest rate (e.g., 0.06 for 6%), as standardized in the output of calculate_cash_flows()
+- `eff_date` - Effective/snapshot date
+- `month` - Projection index (month = 1 corresponds to time 0)
+- `total_payment` OR `investor_total` - Monthly Cash flow amounts
 
 **Optional Arguments**
 - discount_rate - If NULL (default), the function uses each loan's rate from the loan_cash_flows data. If a scalar, it applies that rate uniformly across all loans. 
@@ -273,7 +273,7 @@ Macaulay Duration, Modified Duration, and WAL help inform hedging, pricing, and 
 
 ### calculate_wal()
 
-**Input**: A data frame with one row per loan containing these columns:
+**Input**: A data frame with one row per loan per month containing these columns:
 - `LOAN_ID`
 - `eff_date`
 - `date`
